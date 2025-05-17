@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ song.title }}{% endblock %}
+
+{% block content %}
+    <!-- {{ chart.title }} -->
+    {% for key, value in chart.meta.items %}
+        {% if value %}
+            {{ value }}
+        {% endif %}
+    {% endfor %}
+    {% for section in chart.sections %}
+        {% for line in section.lines %}
+            {% for token in line.tokens %}
+                {{ token.chord }}
+                {{ token.word }}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
