@@ -9,12 +9,13 @@
             {{ value }}
         {% endif %}
     {% endfor %}
+    <br>
     {% for section in chart.sections %}
-        {% for line in section.lines %}
-            {% for token in line.tokens %}
-                {{ token.chord }}
-                {{ token.word }}
+       {% for line in section.lines %}
+            {% for chord in line.chords %}
+                {{ chord }}
+                <br>
             {% endfor %}
-        {% endfor %}
+       {% endfor %}
     {% endfor %}
 {% endblock %}

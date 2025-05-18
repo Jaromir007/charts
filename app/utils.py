@@ -3,13 +3,17 @@ from typing import List, Optional, Dict
 import re
 
 @dataclass
-class Token:
+class Chord:
     chord: Optional[str]
-    text: Optional[str]
+    word: Optional[str]
+
+@dataclass
+class Wrapper: 
+    parts: List[Chord]
 
 @dataclass
 class Line: 
-    tokens: List[Token]
+    chords: List[Wrapper]
 
 @dataclass
 class Section: 
@@ -21,6 +25,9 @@ class Chart:
     title: str 
     meta: Dict[str, str]
     sections: List[Section]
+
+RE_META = re.compile('\{(.+?)\}')
+RE_CHORD = re.compile(r'\[([^\]]+)\]')
 
 def get_sections(chordspro): 
     sections = []
@@ -34,10 +41,29 @@ def get_sections(chordspro):
     if section_temp:
         sections.append(section_temp)
 
-    return sections    
+    return sections   
 
-RE_META = re.compile('\{(.+?)\}')
-RE_CHORD_WORD = re.compile(r'(?:\[([^\]]+)\]\s*)?([^\[\]\s]+)')
+def split_word(text: str) -> List[str]:
+    parts = []
+    while text:
+        match = RE_CHORD.search(text)
+        if match:
+            start, end = match.span()
+            if start > 0:
+                parts.append(text[:start])  
+            parts.append(text[start:end])  
+            text = text[end:]  
+        else:
+            parts.append(text)  
+            break
+    return parts
+
+
+def has_chord(text: str) -> bool:
+    return bool(RE_CHORD.search(text))
+
+def is_chord_only(word: str) -> bool:
+    return bool(RE_CHORD.fullmatch(word))
 
 def parse_chordspro(chordspro: str) -> Chart:
     title = ""
@@ -46,13 +72,12 @@ def parse_chordspro(chordspro: str) -> Chart:
         "tempo": None,
         "author": None 
     }
-    sections_list = []
+    chart = Chart(title=title, meta=meta, sections=[])
     sections = get_sections(chordspro)
     for section in sections:
-        section_struct = Section(None, [])
+        section_temp = Section(name=None, lines=[])
         for line in section:     
-            line_struct = Line([])
-            # Check if the line is meta info
+            line_temp = Line(chords=[]) 
             meta_match = RE_META.match(line)
             if meta_match: 
                 content = meta_match.group(1).strip()
@@ -63,17 +88,24 @@ def parse_chordspro(chordspro: str) -> Chart:
                         title = value 
                     elif key in meta: 
                         meta[key] = value
-            # if not, continue parsing
-            else:
-                for match in RE_CHORD_WORD.finditer(line):
-                    chord, word = match.groups()
-                    line_struct.tokens.append(Token(chord, word))
+            else: 
+                words = line.split()
+                for word in words: 
+                    if has_chord(word): 
+                        if is_chord_only(word): 
+                            chord = RE_CHORD.match(word).group(1)
+                            line_temp.chords.append(Chord(chord=chord, word=None))
+                        else:
+                            pass
+                    else: 
+                        word = word.strip()
+                        if word: 
+                            line_temp.chords.append(Chord(chord=None, word=word))
+                section_temp.lines.append(line_temp)
+        chart.sections.append(section_temp)
 
-                if line_struct.tokens:
-                    section_struct.lines.append(line_struct) 
-        sections_list.append(section_struct)
+    chart.title = title
+    chart.meta = meta
+    return chart
 
 
-    return Chart(title, meta, sections_list)
-
-                    
