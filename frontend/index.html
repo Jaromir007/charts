@@ -6,29 +6,21 @@
     <title>API test</title>
 </head>
 <body>
-
-    <h1>Testing API</h1>
-
-    <button id="load-data">
-        Load Data
-    </button>
-
-    <div id="data">
-
-    </div>
+    <h1>API test</h1>
+    <button id="load-content">Load content</button>
+    <div id="content"></div>
 
     <script>
-        document.getElementById('load-data').addEventListener('click', () => {
-            fetch('http://127.0.0.1:8000/hello/')
+        document.getElementById('load-content').addEventListener('click', () => {
+            fetch('http://127.0.0.1:8000/api/hello/')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('data').innerText = data.message;
+                    document.getElementById('content').innerText = data.message;
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                })
+                    console.error('Error fetching data:', error);
+                });
         })
     </script>
-    
 </body>
 </html>
