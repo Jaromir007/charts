@@ -7,7 +7,7 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData(form); 
     const jsonData = Object.fromEntries(formData.entries()); 
 
-    try{
+    try {
         const res = await fetch('http://127.0.0.1:8000/api/song/', {
             method: 'POST', 
             headers: {
@@ -18,13 +18,12 @@ form.addEventListener('submit', async (e) => {
 
         const data = await res.json();
 
-
         if (res.ok) {
             responseDiv.innerHTML = `<p>Song uploaded successfully!</p>`;
         } else {
             responseDiv.innerHTML = `<p>Error: ${JSON.stringify(data)}</p>`;
         }
     } catch (error) {
-        responseDiv.innerHTML = `<p>Request failed: ${error.message}</p>`
+        responseDiv.innerHTML = `<p>Request failed: ${error.message}</p>`;
     }
-}); 
+});

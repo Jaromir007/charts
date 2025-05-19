@@ -6,7 +6,9 @@
     <title>API test</title>
 </head>
 <body>
-    <h1>Upload song</h1>
+    <h1>SONG</h1>
+
+    <h2>Upload song</h2>
 
     <form id="songUploadForm">
         <label for="">Title: <input type="text" name="title" required></label>
@@ -18,6 +20,11 @@
 
     <div id="response"></div>
 
-    <script src="upload.js"></script>
+    <h2>List of all songs</h2>
+    <button id="getButton">Load</button>
+    <div id="allSongs"></div>
+
+    <script src="post.js" defer></script>
+    <script src="get.js"></script>
 </body>
 </html>
