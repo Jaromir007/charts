@@ -1,6 +1,7 @@
-from django.urls import path
-from .views import hello_api
+from rest_framework.routers import DefaultRouter
+from song.views import SongViewSet
 
-urlpatterns = [
-    path('hello/', hello_api, name='hello_api'),
-]
+router = DefaultRouter()
+router.register(r'song', SongViewSet)
+
+urlpatterns = router.urls 
