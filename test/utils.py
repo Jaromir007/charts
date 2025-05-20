@@ -1,6 +1,41 @@
-import json, re
+import re
+import json
+
+raw_data = """
+{title: Blíže}
+{author: Northpoint}
+{key: B}
+
+{comment: Verse}
+Tvá [E]láska v[H]zala [H]m[Ahoj]i [B]dech  [B]
+a změnila můj [C#m]svět,  
+změnila můj [A]svět.
+
+Jen [E]na tom záleží, [B]  
+být s tebou na [C#m]vždy,  
+být s tebou na [A]vždy.
+
+{comment: Chorus}
+[E]Pane vem mě k sobě [B]blíže,  
+ve tvé blízkosti vždy [C#m]vím, že  
+chci tebe poznat [A]víc,  
+tebe poznat [E]víc.
+
+[E]Tvoje láska smysl [B]dává  
+a všechno překo [C#m]nává,  
+já toužím poznat [A]víc,  
+tebe poznat [E]víc.
+
+[A]Ó, [E]ó, [B]tvoje láska [C#m]vznešená je,  
+[A] Ó, [E]ó, [B]tvoje láska [C#m]láme.
+
+[A][B][C]
+
+word word word
+"""
 
 def parse_chordspro(text): 
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
     metadata = dict(re.findall(r"{(\w+):\s*([^}]+)}", text.split("\n\n")[0]))
 
     sections_raw = re.split(r"\n{2,}", text.strip())
@@ -41,5 +76,6 @@ def parse_chordspro(text):
         "sections": sections
     }
 
-    return song_data
+    return json.dumps(song_data, ensure_ascii=False, indent=2)
 
+print(parse_chordspro(raw_data))
