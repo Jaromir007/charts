@@ -10,16 +10,21 @@ class SongViewSet(viewsets.ModelViewSet):
     serializer_class = SongSerializer
     permission_classes = [AllowAny]
 
-    def create(self, request, *args, **kwargs): 
-        chordspro_text = request.data_get('chordspro_text')
-        parsed_json = parse_chordspro(chordspro_text)
+    def perform_create(self, serializer):
+        chordspro_text = self.request.data.get('chordspro_text', '')
+        chordspro_json = parse_chordspro(chordspro_text)
+        serializer.save(chordspro_json=chordspro_json)
 
-        serializer = self.get_serizlizer(data=request.data)
+    def create(self, request, *args, **kwargs): 
+        chordspro_text = request.data.get('chordspro_text')
+        chordspro_json = parse_chordspro(chordspro_text)
+
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
         response_data = serializer.data
-        response_data['parsed'] = parsed_json
+        response_data['chordspro_json'] = chordspro_json
 
         headers = self.get_success_headers(serializer.data)
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
