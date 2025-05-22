@@ -1,6 +1,7 @@
-import json, re
+import re, json
 
 def parse_chordspro(text): 
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
     metadata = dict(re.findall(r"{(\w+):\s*([^}]+)}", text.split("\n\n")[0]))
 
     sections_raw = re.split(r"\n{2,}", text.strip())
@@ -42,4 +43,3 @@ def parse_chordspro(text):
     }
 
     return song_data
-
