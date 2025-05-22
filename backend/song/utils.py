@@ -1,4 +1,4 @@
-import re, json
+import re
 
 def parse_chordspro(text): 
     text = text.replace('\r\n', '\n').replace('\r', '\n')
